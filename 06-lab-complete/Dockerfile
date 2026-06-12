@@ -29,7 +29,8 @@ COPY --from=builder /root/.local /home/agent/.local
 COPY app/ ./app/
 COPY utils/ ./utils/
 
-RUN chown -R agent:agent /app
+# Create VectorDB and check permissions
+RUN mkdir -p /app/VectorDB && chown -R agent:agent /app
 
 USER agent
 
@@ -40,10 +41,10 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+# Health check (Queries internal FastAPI backend on port 8001)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
     CMD python -c \
-    "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" \
+    "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')" \
     || exit 1
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD ["python", "app/app.py"]
