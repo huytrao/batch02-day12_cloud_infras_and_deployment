@@ -1,0 +1,29 @@
+name: CD — Continuous Deployment
+
+on:
+  workflow_run:
+    workflows: ["CI — Production Readiness Check"]
+    types:
+      - completed
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          echo "🎉 CI passed successfully! Triggering CD pipeline..."
+          echo "Render is typically configured for Auto-Deploy via GitHub Integration."
+          echo "If you have a manual deploy hook, it will be triggered below:"
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "Sending POST request to Render Deploy Hook..."
+            curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+            echo "Deployment triggered!"
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set. Assuming Render Auto-Deploy is active."
+          fi
