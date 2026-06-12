@@ -147,3 +147,4 @@ streamlit-audiorec
 google-generativeai
 nest-asyncio==1.6.0
 PyJWT>=2.8.0
+redis>=5.0.0
