@@ -148,7 +148,7 @@ JWT flow hoạt động như sau:
 
 ### Kiến trúc tổng thể và các tính năng đã tích hợp:
 Dự án cuối khóa đã được thực hiện và lưu trong thư mục `06-lab-complete/app`. Tất cả các tính năng từ lý thuyết đã được áp dụng vào thực tế để biến một Agent cơ bản thành chuẩn Production:
-
+https://day12-ai-agent-c4wo.onrender.com/
 1. **Config Management:** Toàn bộ cấu hình (Port, Redis URL, JWT Secret, API Key, Budget) được đẩy ra biến môi trường (`.env`) và quản lý bằng `pydantic_settings` trong `app/config.py`.
 2. **API Security:** 
    - Route `/ask` được bảo vệ nghiêm ngặt bằng Dependency xác thực `X-API-Key`.
