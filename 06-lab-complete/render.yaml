@@ -38,16 +38,4 @@ services:
         generateValue: true
 
       - key: REDIS_URL
-        fromService:
-          type: redis
-          name: day12-redis
-          property: connectionString
-
-  - type: redis
-    name: day12-redis
-    plan: free
-    maxmemoryPolicy: allkeys-lru
-
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: Allow all IPs
+        sync: false
