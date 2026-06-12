@@ -7,23 +7,32 @@ services:
     plan: free
     healthCheckPath: /health
     autoDeploy: true
+
     envVars:
       - key: ENVIRONMENT
         value: production
+
       - key: APP_NAME
         value: "Day12 Production AI Agent"
+
       - key: APP_VERSION
         value: "1.0.0"
+
       - key: LOG_LEVEL
         value: INFO
+
       - key: RATE_LIMIT_PER_MINUTE
         value: "10"
+
       - key: MONTHLY_BUDGET_USD
         value: "10.0"
+
       - key: AGENT_API_KEY
         generateValue: true
+
       - key: JWT_SECRET
         generateValue: true
+
       - key: REDIS_URL
         fromService:
           type: redis
@@ -34,3 +43,7 @@ services:
     name: day12-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow all IPs
