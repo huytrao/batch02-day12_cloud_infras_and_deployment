@@ -76,15 +76,15 @@ Services communicate on a Docker internal network. Nginx → Agent via service n
 
 ### Exercise 3.1: Railway deployment
 
-- **URL:** https://day12-agent.railway.app (or your actual deployed URL in `DEPLOYMENT.md`)
-- **Platform:** Railway
+- **URL:** https://day12-ai-agent.onrender.com
+- **Platform:** Render.com (Do giới hạn tài khoản free của Railway, dự án đã được deploy qua Render Blueprint thành công)
 - **Steps completed:**
-  1. `npm i -g @railway/cli` — Installed CLI
-  2. `railway login` — Authenticated
-  3. `railway init` — Created project
-  4. `railway variables set AGENT_API_KEY=...` + `REDIS_URL=...`
-  5. `railway up` — Deployed from Dockerfile
-  6. `railway domain` — Got public URL
+  1. Cấu hình dịch vụ Redis free và Web service sử dụng Dockerfile trong file `render.yaml`.
+  2. Commit và push code lên GitHub repository.
+  3. Đăng nhập Render.com qua tài khoản GitHub, kết nối repo.
+  4. Tạo Blueprint Instance, Render tự động liên kết Redis `connectionString` vào biến môi trường `REDIS_URL` của web service.
+  5. Thiết lập thêm `AGENT_API_KEY`, `JWT_SECRET`.
+  6. Deploy thành công và nhận public URL.
 
 ### Exercise 3.2: render.yaml vs railway.toml comparison
 

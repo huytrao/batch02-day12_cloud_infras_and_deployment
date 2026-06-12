@@ -4,29 +4,28 @@
 
 ## Public URL
 
-🔗 [https://day12-agent.railway.app](https://day12-agent.railway.app)
+🔗 [https://day12-ai-agent.onrender.com](https://day12-ai-agent.onrender.com)
 
-> **Note:** Deploy lên Railway sau khi push code lên GitHub và kết nối Railway với repo.  
-> Update URL thật ở đây sau khi deploy thành công.
+> **Note:** Dự án đã được deploy lên Render.com sử dụng mô hình Blueprint thông qua file `render.yaml`.
 
 ## Platform
 
-**Railway** — được chọn vì có $5 free credit, CLI đơn giản, và hỗ trợ Dockerfile.
+**Render.com** — được chọn làm môi trường thay thế cho Railway do chính sách giới hạn tài khoản free của Railway. Render cung cấp gói Free (Web Service + Redis) ổn định và dễ cấu hình qua file `render.yaml`.
 
 ## Configuration
 
 ### Files
-- `railway.toml` — Railway deployment config
+- `render.yaml` — Render Blueprint configuration file
 - `Dockerfile` — Multi-stage build, non-root user
 
-### Environment Variables Set on Railway
+### Environment Variables Set on Render
 
 | Variable | Description |
 |----------|-------------|
-| `PORT` | Server port (Railway injects automatically) |
-| `AGENT_API_KEY` | Authentication key for `/ask` endpoint |
+| `PORT` | Server port (Render injects automatically) |
+| `AGENT_API_KEY` | Authentication key for `/ask` endpoint (e.g. `secret-key-lab12`) |
 | `JWT_SECRET` | JWT signing secret |
-| `REDIS_URL` | Redis connection (from Railway Redis plugin) |
+| `REDIS_URL` | Redis connection string (tự động lấy từ Key-Value/Redis service) |
 | `LOG_LEVEL` | `INFO` |
 | `ENVIRONMENT` | `production` |
 | `RATE_LIMIT_PER_MINUTE` | `10` |
@@ -36,19 +35,19 @@
 
 ### 1. Health Check (no auth needed)
 ```bash
-curl https://day12-agent.railway.app/health
+curl https://day12-ai-agent.onrender.com/health
 # Expected: {"status": "ok", "instance_id": "...", "uptime_seconds": ...}
 ```
 
 ### 2. Readiness Check
 ```bash
-curl https://day12-agent.railway.app/ready
+curl https://day12-ai-agent.onrender.com/ready
 # Expected: {"ready": true, "instance": "..."}
 ```
 
 ### 3. Without API Key → 401
 ```bash
-curl -X POST https://day12-agent.railway.app/ask \
+curl -X POST https://day12-ai-agent.onrender.com/ask \
   -H "Content-Type: application/json" \
   -d '{"user_id": "test", "question": "Hello"}'
 # Expected: 401 Unauthorized
@@ -56,7 +55,7 @@ curl -X POST https://day12-agent.railway.app/ask \
 
 ### 4. With API Key → 200
 ```bash
-curl -X POST https://day12-agent.railway.app/ask \
+curl -X POST https://day12-ai-agent.onrender.com/ask \
   -H "X-API-Key: YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{"user_id": "test", "question": "What is Docker?"}'
@@ -66,7 +65,7 @@ curl -X POST https://day12-agent.railway.app/ask \
 ### 5. Rate Limiting → 429 after 10 requests
 ```bash
 for i in $(seq 1 15); do
-  curl -X POST https://day12-agent.railway.app/ask \
+  curl -X POST https://day12-ai-agent.onrender.com/ask \
     -H "X-API-Key: YOUR_API_KEY_HERE" \
     -H "Content-Type: application/json" \
     -d "{\"user_id\": \"test\", \"question\": \"Request $i\"}"
@@ -77,39 +76,13 @@ done
 
 ## Deploy Steps
 
-```bash
-# 1. Install Railway CLI
-npm i -g @railway/cli
-
-# 2. Login
-railway login
-
-# 3. Initialize (in 06-lab-complete directory)
-cd 06-lab-complete
-railway init
-
-# 4. Add Redis plugin via Railway dashboard (or CLI)
-railway add --plugin redis
-
-# 5. Set environment variables
-railway variables set AGENT_API_KEY=your-secret-key
-railway variables set JWT_SECRET=your-jwt-secret
-railway variables set LOG_LEVEL=INFO
-railway variables set ENVIRONMENT=production
-railway variables set RATE_LIMIT_PER_MINUTE=10
-railway variables set MONTHLY_BUDGET_USD=10.0
-
-# 6. Deploy
-railway up
-
-# 7. Get public URL
-railway domain
-```
+1. Định nghĩa file `render.yaml` ở thư mục gốc của project (đã định cấu hình web service và redis).
+2. Commit và push code lên GitHub repo.
+3. Đăng nhập vào Render Dashboard, chọn **New** -> **Blueprint**.
+4. Chọn repo GitHub `day12_ha-tang-cloud_va_deployment`.
+5. Đặt tên cho Blueprint Instance (ví dụ `HuytraoCICD`) và bấm **Apply**.
+6. Render sẽ tự động khởi tạo Redis và Web Service, chạy build Dockerfile và deploy lên domain public.
 
 ## Screenshots
 
-> Screenshots will be added after deployment.
 - [Deployment dashboard](screenshots/dashboard.png)
-- [Service running](screenshots/running.png)
-- [Health check test](screenshots/health.png)
-- [API test results](screenshots/test.png)

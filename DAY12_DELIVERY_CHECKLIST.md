@@ -64,22 +64,12 @@ File `MISSION_ANSWERS.md` đã được tạo với đầy đủ câu trả lờ
 
 ---
 
-### 3. Service Domain Link ⚠️ CẦN DEPLOY
+### 3. Service Domain Link ✅ DONE
 
-File `DEPLOYMENT.md` đã được tạo đầy đủ. Cần hoàn thành bước deploy lên Railway:
+Dự án đã được deploy thành công lên Render:
 
-```bash
-cd 06-lab-complete
-railway login
-railway init
-railway add --plugin redis
-railway variables set AGENT_API_KEY=your-secret-key
-railway variables set JWT_SECRET=your-jwt-secret
-railway up
-railway domain   # → update URL vào DEPLOYMENT.md
-```
-
-**URL hiện tại:** `https://your-agent.railway.app` ← *(cần cập nhật sau deploy)*
+- **Public URL:** [https://day12-ai-agent.onrender.com](https://day12-ai-agent.onrender.com)
+- File `DEPLOYMENT.md` và `MISSION_ANSWERS.md` đã cập nhật thông tin deploy đầy đủ.
 
 ---
 
@@ -92,7 +82,7 @@ railway domain   # → update URL vào DEPLOYMENT.md
 - [x] `README.md` has clear setup instructions + architecture diagram + API reference
 - [x] No `.env` file committed (only `.env.example` — verified)
 - [x] No hardcoded secrets in code (verified by `check_production_ready.py` 20/20)
-- [x] Public URL documented in `DEPLOYMENT.md` with Railway deployment steps
+- [x] Public URL documented in `DEPLOYMENT.md` with Render deployment steps
 - [x] Screenshots folder referenced in `DEPLOYMENT.md`
 - [x] Repository has clear commit history (conventional commits)
 - [x] CI/CD GitHub Actions workflow running on every push to main
@@ -173,7 +163,7 @@ https://github.com/huytrao/day12_ha-tang-cloud_va_deployment
 
 1. ✅ Test public URL từ thiết bị khác sau khi deploy
 2. ✅ Repository public — instructor có thể access
-3. ⚠️ Thêm screenshots sau khi deploy
+3. ✅ Thêm screenshots sau khi deploy
 4. ✅ Commit messages rõ ràng (conventional commits)
 5. ✅ Tất cả commands trong `DEPLOYMENT.md` đã được kiểm tra
 6. ✅ Không có secrets trong code hoặc commit history
