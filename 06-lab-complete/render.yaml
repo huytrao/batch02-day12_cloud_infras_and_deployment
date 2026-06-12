@@ -3,6 +3,7 @@ services:
     name: day12-ai-agent
     runtime: docker
     dockerfilePath: ./Dockerfile
+    rootDir: 06-lab-complete
     region: singapore
     plan: free
     healthCheckPath: /health
@@ -29,6 +30,9 @@ services:
 
       - key: AGENT_API_KEY
         generateValue: true
+
+      - key: GOOGLE_API_KEY
+        sync: false
 
       - key: JWT_SECRET
         generateValue: true
