@@ -1,0 +1,68 @@
+name: CI — Production Readiness Check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  production-readiness:
+    name: Production Readiness Check
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: 06-lab-complete
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: 06-lab-complete/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run production readiness checks
+        run: python check_production_ready.py
+
+      - name: Verify app imports correctly
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, '.')
+          from app.config import settings
+          from app.auth import verify_api_key
+          from app.rate_limiter import rate_limiter_user
+          from app.cost_guard import cost_guard
+          from utils.mock_llm import ask
+          print('✅ All imports OK')
+          print(f'App: {settings.APP_NAME}')
+          "
+
+      - name: Check Dockerfile quality
+        run: |
+          echo "--- Checking Dockerfile ---"
+          grep -q "AS builder" Dockerfile && echo "✅ Multi-stage build found"
+          grep -q "slim" Dockerfile && echo "✅ Slim base image found"
+          grep -q "HEALTHCHECK" Dockerfile && echo "✅ HEALTHCHECK found"
+          grep -q "USER " Dockerfile && echo "✅ Non-root user found"
+
+      - name: Check no secrets in code
+        run: |
+          echo "--- Checking for hardcoded secrets ---"
+          ! grep -r "sk-" app/ && echo "✅ No hardcoded API keys"
+          ! grep -r "password123" app/ && echo "✅ No default passwords"
+
+      - name: Lint with flake8 (non-blocking)
+        run: |
+          pip install flake8 --quiet
+          flake8 app/ utils/ --max-line-length=100 --ignore=E501,W503 || true
